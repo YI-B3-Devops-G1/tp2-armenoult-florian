@@ -1,11 +1,15 @@
 version: '3'
 services:
     webserver:
-        image: nginx:latest
+        build:
+            context: ./NGINX
+            dockerfile: Dockerfile
         ports:
          - "80:80"
         environment:
          - NGINX_PORT=80
+        container_name: webserver
+        hostname: webserver
     api:
         build:
           context: ./API
