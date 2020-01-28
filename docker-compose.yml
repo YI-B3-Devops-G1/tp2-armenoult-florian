@@ -10,12 +10,39 @@ services:
          - NGINX_PORT=80
         container_name: webserver
         hostname: webserver
+        networks:
+            - network-web
     api:
         build:
           context: ./API
           dockerfile: Dockerfile
-    db:
-        image: postgres
+        environment:
+            - DB_HOST=pgsql
+            - DB_PORT=5432
+            - DB_NAME=database
+            - DB_USER=postgres
+            - DB_PASSWORD=postgres
+        networks:
+            - network-web
+            - network-database
+
+    pgsql:
+        image: postgres:alpine
         restart: always
         environment:
-            POSTGRES_PASSWORD: root
+            POSTGRES_USER: postgres
+            POSTGRES_PASSWORD: postgres
+            POSTGRES_DB: database
+            PGDATA: /tmp
+        networks:
+            - network-database
+    
+    redis:
+        image: redis:alpine
+        restart: always
+        networks:
+            - network-database
+
+networks:
+  network-database:
+  network-web:
